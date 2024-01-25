@@ -9,6 +9,7 @@ module.exports = {
         md: "768px",
         lg: "1024px",
       },
+      fontFamily: "Prompt",
       colors: {
         transparent: "transparent",
         systemBlack: "#000",
