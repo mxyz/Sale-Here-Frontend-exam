@@ -23,7 +23,6 @@ interface IMessage {
 const ChatRoomController = () => {
   const { userName, chatRoomName } = useParams();
   const [postMessage] = useMutation(POST_MESSAGE);
-  const [messages, setMessages] = useState<IMessage[]>([]);
   const [messageBody, setMessageBody] = useState("");
 
   const scrollTarget = useRef<null | HTMLDivElement>(null);
