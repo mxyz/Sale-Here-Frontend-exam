@@ -19,6 +19,12 @@
     ],
     "strictNullChecks": true,
   },
-  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/app/chatRoom/ChatRoomController.jsx",
+  ],
   "exclude": ["node_modules"],
 }

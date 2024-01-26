@@ -1,12 +1,11 @@
-FROM node:10.16.0-alpine
+FROM node:16-alpine
 
-RUN mkdir /usr/src/app
-WORKDIR /usr/src/app
+WORKDIR /app
 
-ENV PATH /usr/src/app/node_modules/.bin:$PATH
+COPY package.json ./
 
-COPY package.json /usr/src/app/package.json
-RUN npm install
-RUN npm install react-scripts -g
+COPY yarn.lock ./
 
-CMD ["npm", "start"]
+RUN yarn install --frozen-lockfile
+
+COPY . .
