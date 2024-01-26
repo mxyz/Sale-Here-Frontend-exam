@@ -1,40 +1,60 @@
-import {WebSocketServer} from 'ws'
+const { GraphQLServer, PubSub } = require("graphql-yoga");
 
-const server = new WebSocketServer({port: 8080}, () => console.log('Server started'))
+//graphQL type definitions
+const typeDefs = `
+  type Message {
+    id: ID!
+    user: String!
+    text: String!
+    chatRoomName: String!
+  }
+  type Query {
+    messages: [Message!]
+  }
+  type Mutation {
+    postMessage(user: String!, text: String!, chatRoomName: String!): ID!
+  }
+  type Subscription {
+    messages: [Message!]
+  }
+`;
 
-const users = new Set();
+const messages = [];
+const subscribers = [];
+const onMessagesUpdates = (fn) => subscribers.push(fn);
 
-function sendMessage(message) {
-    users.forEach((user) => {
-        user.ws.send(JSON.stringify(message))
-    })
-}
+//to perform functions on each Type
+const resolvers = {
+  Query: {
+    messages: () => messages, //returns messages
+  },
+  Mutation: { //post new message and returns id
+    postMessage: (parent, { user, text, chatRoomName }) => {
+      const id = messages.length;
+      messages.push({
+        id,
+        user,
+        text,
+        chatRoomName,
+      });
+      subscribers.forEach((fn) => fn());
+      return id;
+    },
+  },
+  Subscription: {
+    messages: {
+      subscribe: (parent, args, { pubsub }) => {
+        const channel = Math.random().toString(36).slice(2, 15);
+        onMessagesUpdates(() => pubsub.publish(channel, { messages }));
+        setTimeout(() => pubsub.publish(channel, { messages }), 0);
+        return pubsub.asyncIterator(channel);
+      },
+    },
+  },
+};
 
-server.on('connection', (ws) => {
-    const userRef = {ws}
-    users.add(userRef)
-    ws.on('message', (message) => {
-        console.log(message);
-        try {
-            const data = JSON.parse(message);
-            if(typeof data.sender !== 'string' || typeof data.body !== 'string'){
-                console.error('Invalid message');
-                return
-            }
-
-            const messageToSend = {
-                sender: data.sender,
-                body: data.body,
-                sendAt: Date.now()
-            }
-
-            sendMessage(messageToSend)
-        } catch(e) {
-            console.error('Error parsing message', e)
-        }
-    });
-    ws.on('close', (code, reason) => {
-        users.delete(userRef);
-        console.log(`Connection closed: ${code} ${reason}!`);
-    })
+const pubsub = new PubSub();
+const server = new GraphQLServer({ typeDefs, resolvers, context: { pubsub } });
+server.start(({ port }) => {
+  console.log(`Server on http://localhost:${port}/`);
 });
