@@ -22,49 +22,10 @@ interface IMessage {
 
 const ChatRoomController = () => {
   const { userName, chatRoomName } = useParams();
-  const [postMessage] = useMutation(POST_MESSAGE);
   const [messageBody, setMessageBody] = useState("");
-
   const scrollTarget = useRef<null | HTMLDivElement>(null);
 
-  //   const ws = useRef<any>();
-
-  //   const sendMessage = () => {
-  //     if (messageBody) {
-  //       ws.current.send(
-  //         JSON.stringify({
-  //           sender: userName,
-  //           body: messageBody,
-  //         })
-  //       );
-  //       setMessageBody("");
-  //     }
-  //   };
-
-  //   useEffect(() => {
-  //     ws.current = new WebSocket("ws://localhost:8080");
-  //     ws.current.onopen = () => {
-  //       console.log("Connection Opened");
-  //       setConnectionOpen(true);
-  //     };
-  //     ws.current.onmessage = (event) => {
-  //       const data = JSON.parse(event.data);
-  //       setMessages((_messages) => [..._messages, data]);
-  //     };
-  //     return () => {
-  //       console.log("Cleaning up...");
-  //       ws.current.close();
-  //     };
-  //   }, []);
-
-  //   const scrollTarget = useRef<null | HTMLDivElement>(null);
-
-  //   useEffect(() => {
-  //     if (scrollTarget.current) {
-  //       scrollTarget.current.scrollIntoView({ behavior: "smooth" });
-  //     }
-  //   }, [messages.length]);
-
+  const [postMessage] = useMutation(POST_MESSAGE);
   const { data: responseData } = useSubscription(GET_MESSAGES);
 
   const messageData: IMessage[] = useMemo(() => {
