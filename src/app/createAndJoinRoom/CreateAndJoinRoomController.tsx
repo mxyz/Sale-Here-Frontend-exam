@@ -9,6 +9,7 @@ const CreateAndJoinRoomController = () => {
   const { pathname } = useLocation();
   const { userName } = useParams();
   const [chatRoomName, setChatRoomName] = useState("");
+
   const onChangeRoomName = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setChatRoomName(event.target.value);
@@ -36,12 +37,12 @@ const CreateAndJoinRoomController = () => {
   }, [chatRoomName, navigator, userName]);
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center space-y-8 py-16">
       <Typography typography={TYPOGRAPHY_TYPES.TITLE}>
         {labels.title}
       </Typography>
       <section
-        className="flex flex-col items-center space-y-4"
+        className="flex flex-col items-center space-y-8"
         id="form-section"
       >
         <Input
@@ -50,10 +51,10 @@ const CreateAndJoinRoomController = () => {
           placeholder="ชื่อห้อง"
         />
         <section className="flex space-x-4" id="buttons-section">
-          <Button className="text-[24px]" onClick={onClickBack} outline>
+          <Button className="text-[20px]" onClick={onClickBack} outline>
             กลับ
           </Button>
-          <Button className="text-[24px]" onClick={onClickSubmit}>
+          <Button className="text-[20px]" onClick={onClickSubmit}>
             {labels.submitButton}
           </Button>
         </section>
