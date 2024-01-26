@@ -1,7 +1,8 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import Typography, { TYPOGRAPHY_TYPES } from "../../components/Typography";
-import Input from "../../components/Input";
+import MessageInput from "./components/MessageInput";
+import ChatBox from "./components/ChatBox";
 
 interface IMessage {
   sender: string;
@@ -11,7 +12,7 @@ interface IMessage {
 
 const ChatRoomController = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [isConnectionOpen, setConnectionOpen] = useState(false);
+  const [, setConnectionOpen] = useState(false);
   const [messageBody, setMessageBody] = useState("");
 
   const { userName, chatRoomName } = useParams();
@@ -54,55 +55,32 @@ const ChatRoomController = () => {
   }, [messages.length]);
 
   return (
-    <div className="relative w-full h-[90vh] p-4">
+    <div className="flex flex-col w-full h-full p-4 box-border">
       <Typography typography={TYPOGRAPHY_TYPES.TITLE}>
         ห้อง {chatRoomName}
       </Typography>
-      <section
-        id="chat-view-container"
-        className="flex flex-col w-full h-full overflow-auto"
-      >
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`my-3 rounded py-3 w-1/3 text-white ${
-              message.sender === userName
-                ? "self-end bg-purple-600"
-                : "bg-blue-600"
-            }`}
-          >
-            <div className="flex items-center">
-              <div className="ml-2">
-                <div className="flex flex-row">
-                  <div className="text-sm font-medium leading-5 text-gray-900">
-                    {message.sender} at
-                  </div>
-                  <div className="ml-1">
-                    <div className="text-sm font-bold leading-5 text-gray-900">
-                      {new Date(message.sendAt).toLocaleTimeString(undefined, {
-                        timeStyle: "short",
-                      })}{" "}
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-1 text-sm font-semibold leading-5">
-                  {message.body}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-        <div ref={scrollTarget} />
-      </section>
-      <footer className="sticky bottom-0 left-0 right-0 w-full">
-        <Input
-          type="text"
-          value={messageBody}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setMessageBody(e.target.value)
-          }
-        />
-      </footer>
+      <div className="relative flex flex-col w-full h-[calc(100%-64px)] bg-[#f7f7f7] rounded-[12px]">
+        <section className="flex flex-col w-full h-[calc(100%-60px)] overflow-auto px-4">
+          {messages.map((message, index) => (
+            <ChatBox
+              key={index}
+              sender={message.sender}
+              message={message.body}
+              owned={message.sender === userName}
+            />
+          ))}
+          <div ref={scrollTarget} />
+        </section>
+        <footer className="sticky bottom-0 left-0 right-0 w-full">
+          <MessageInput
+            value={messageBody}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+              setMessageBody(e.target.value)
+            }
+            onEnter={sendMessage}
+          />
+        </footer>
+      </div>
     </div>
   );
 };
