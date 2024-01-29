@@ -101,12 +101,13 @@ $ cd server
 run this command to start server at port `4000`
 ```
 $ yarn
+```
+then run
+```
 $ yarn start
 ```
-then go back to main project's folder
-```
-$ cd ..
-```
+then open another Terminal on main project's folder
+
 install package
 ```
 $ yarn
